@@ -52,16 +52,18 @@ task('db:import', function () {
             // Drop all tables.
             if (empty((new ConsoleUtility())->getOption('importTaskDoNotDropAllTablesBeforeImport'))) {
                 runLocally(sprintf(
-                    'export MYSQL_PWD=%s && %s -h%s -P%s -u%s %s %s --add-drop-table --no-data | ' .
-                    'grep -e \'^DROP \| FOREIGN_KEY_CHECKS\' | %s -h%s -P%s -u%s -D%s %s',
+                    'export MYSQL_PWD=%s && %s %s -h%s -P%s -u%s %s %s --add-drop-table --no-data | ' .
+                    'grep -e \'^DROP \| FOREIGN_KEY_CHECKS\' | %s %s -h%s -P%s -u%s -D%s %s',
                     escapeshellarg($databaseConfig['password']),
                     get('local/bin/mysqldump'),
+                    get('db_import_drop-all-tables_options', ''),
                     escapeshellarg($databaseConfig['host']),
                     escapeshellarg((isset($databaseConfig['port']) && $databaseConfig['port']) ? $databaseConfig['port'] : 3306),
                     escapeshellarg($databaseConfig['user']),
                     escapeshellarg($databaseConfig['dbname']),
                     DatabaseUtility::getSslCliOptions($databaseConfig),
                     get('local/bin/mysql'),
+                    get('db_import_drop-all-tables_options', ''),
                     escapeshellarg($databaseConfig['host']),
                     escapeshellarg((isset($databaseConfig['port']) && $databaseConfig['port']) ? $databaseConfig['port'] : 3306),
                     escapeshellarg($databaseConfig['user']),
